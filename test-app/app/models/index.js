@@ -5,7 +5,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
   port: dbConfig.port,
-  operatorsAliases: false,
+  operatorsAliases: 0,
 
   pool: {
     max: dbConfig.pool.max,
@@ -21,5 +21,13 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
+db.users = require("./user.model.js")(sequelize, Sequelize);
+db.expirations = require("./expiration.model.js")(sequelize, Sequelize);
+
+db.users.hasMany(db.expirations, { as: "expirations" });
+db.expirations.belongsTo(db.users, {
+  foreignKey: "userId",
+  as: "user",
+});
 
 module.exports = db;
